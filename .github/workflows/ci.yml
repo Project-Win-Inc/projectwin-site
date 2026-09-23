@@ -26,7 +26,7 @@ jobs:
         run: |
           node -e '
           const fs = require("fs");
-          for (const f of fs.readdirSync(".lighthouseci").filter((f) => f.startsWith("lhr-"))) {
+          for (const f of fs.readdirSync(".lighthouseci").filter((f) => f.startsWith("lhr-") && f.endsWith(".json"))) {
             const d = JSON.parse(fs.readFileSync(".lighthouseci/" + f));
             const a = d.audits, n = (k) => Math.round(a[k].numericValue);
             console.log(d.finalDisplayedUrl, "perf", d.categories.performance.score,
