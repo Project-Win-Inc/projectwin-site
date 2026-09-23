@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
+import { test3d } from './fixtures';
 
-test('capable device runs the 3D scene without errors', async ({ page }) => {
+test3d('capable device runs the 3D scene without errors', async ({ page }) => {
   const errors: string[] = [];
   page.on('pageerror', (e) => errors.push(e.message));
   page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
@@ -31,14 +32,14 @@ test('JS disabled: everything readable, stills visible', async ({ browser }) => 
   await ctx.close();
 });
 
-test('three chunk failing to load falls back to static', async ({ page }) => {
+test3d('three chunk failing to load falls back to static', async ({ page }) => {
   await page.route(/\/_astro\/three\..*\.js$/, (r) => r.abort());
   await page.goto('/');
   await expect(page.locator('html')).toHaveAttribute('data-motion', 'static', { timeout: 10_000 });
   await expect(page.locator('img[data-still="p000"]')).toBeVisible();
 });
 
-test('jumping to #contact past the pinned lab leaves a consistent page', async ({ page }) => {
+test3d('jumping to #contact past the pinned lab leaves a consistent page', async ({ page }) => {
   await page.goto('/');
   await expect(page.locator('html')).toHaveAttribute('data-scene', 'ready', { timeout: 10_000 });
   await page.goto('/#contact');
@@ -68,7 +69,7 @@ test('jumping to #contact past the pinned lab leaves a consistent page', async (
   expect(handoff.canvas).toBeCloseTo(0, 5);
 });
 
-test('resize mid-page keeps canvas matched and no overflow', async ({ page }) => {
+test3d('resize mid-page keeps canvas matched and no overflow', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto('/');
   await expect(page.locator('html')).toHaveAttribute('data-scene', 'ready', { timeout: 10_000 });
@@ -87,7 +88,7 @@ test('resize mid-page keeps canvas matched and no overflow', async ({ page }) =>
   expect(overflow).toBeLessThanOrEqual(0);
 });
 
-test('render loop stops when the scene is offscreen', async ({ page }) => {
+test3d('render loop stops when the scene is offscreen', async ({ page }) => {
   await page.goto('/#contact');
   await expect(page.locator('html')).toHaveAttribute('data-scene', 'ready', { timeout: 10_000 });
   await page.waitForTimeout(600);
@@ -100,7 +101,7 @@ test('render loop stops when the scene is offscreen', async ({ page }) => {
   expect(await frames()).toBe(a);
 });
 
-test('largest contentful paint is the wordmark, not an image', async ({ page }) => {
+test3d('largest contentful paint is the wordmark, not an image', async ({ page }) => {
   await page.addInitScript(() => {
     (window as unknown as { __lcp: string[] }).__lcp = [];
     new PerformanceObserver((list) => {
@@ -117,7 +118,7 @@ test('largest contentful paint is the wordmark, not an image', async ({ page }) 
   expect(lcp.at(-1)).toMatch(/H1|:in-h1/);
 });
 
-test('3D code is requested only after the page has loaded', async ({ page }) => {
+test3d('3D code is requested only after the page has loaded', async ({ page }) => {
   await page.goto('/');
   await expect(page.locator('html')).toHaveAttribute('data-scene', 'ready', { timeout: 10_000 });
   const t = await page.evaluate(() => {
@@ -128,4 +129,12 @@ test('3D code is requested only after the page has loaded', async ({ page }) => 
     return { load: nav.loadEventEnd, three: three?.startTime ?? -1 };
   });
   expect(t.three).toBeGreaterThanOrEqual(t.load);
+});
+
+test('software-rendered WebGL (no GPU) falls back to static stills', async ({ page }) => {
+  // The Playwright config forces SwiftShader, i.e. a browser with no GPU acceleration.
+  await page.goto('/');
+  await expect(page.locator('html')).toHaveAttribute('data-motion', 'static', { timeout: 10_000 });
+  await expect(page.locator('canvas.stage-canvas')).toHaveCount(0);
+  await expect(page.locator('img[data-still="p000"]')).toBeVisible();
 });
