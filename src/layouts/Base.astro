@@ -49,11 +49,13 @@ const jsonLd = {
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="theme-color" content="#ecebe6" />
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)}></script>
-    {beacon && <script
-      defer
-      src="https://static.cloudflareinsights.com/beacon.min.js"
-      data-cf-beacon={JSON.stringify({ token: beacon })}
-    ></script>}
+    {beacon && (
+      <script
+        defer
+        src="https://static.cloudflareinsights.com/beacon.min.js"
+        data-cf-beacon={JSON.stringify({ token: beacon })}
+      ></script>
+    )}
   </head>
   <body>
     <a class="skip" href="#main">
