@@ -63,6 +63,8 @@ test('header stays on one row at phone width, keeping the legal tagline', async 
 });
 
 test('still frames keep their aspect ratio', async ({ page }) => {
+  // The still is the static-mode stand-in for the 3D scene, so check it in static mode.
+  await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('/');
   const img = page.locator('img[data-still="p000"]');
   await expect(img).toBeVisible();

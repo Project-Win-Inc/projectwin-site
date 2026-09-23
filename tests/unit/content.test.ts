@@ -55,4 +55,13 @@ describe('site content', () => {
       'Simplicity and elegance',
     ]);
   });
+  it('only uses characters present in the subset display font', () => {
+    // Mirrors the --unicodes list in scripts/subset-font.sh.
+    const extra = [0xa0, 0xb7, 0xe9, 0x2018, 0x2019, 0x201c, 0x201d, 0x2026, 0x2192];
+    const missing = [...allText].filter((ch) => {
+      const c = ch.codePointAt(0)!;
+      return !((c >= 0x20 && c <= 0x7e) || extra.includes(c));
+    });
+    expect(missing).toEqual([]);
+  });
 });

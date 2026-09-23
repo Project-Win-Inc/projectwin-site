@@ -32,6 +32,9 @@ a:hover {
   outline: 2px solid var(--ink);
   outline-offset: 3px;
 }
+.dark {
+  --mute: #9a9a9a; /* 6.55:1 on ink */
+}
 .dark :focus-visible {
   outline-color: var(--amber);
 }
@@ -131,12 +134,16 @@ a:hover {
   grid-template-rows: auto 1fr auto;
 }
 .wordmark {
+  /* Painted at first frame (it is the LCP element); no reveal animation here. */
   font-size: var(--fs-wordmark);
   font-weight: 900;
   line-height: 0.82;
   letter-spacing: -0.055em;
   margin-left: -0.04em;
   padding-top: clamp(1.5rem, 5vh, 4rem);
+}
+.wordmark .line {
+  display: block;
 }
 .hero-line {
   font-size: var(--fs-lede);
@@ -358,9 +365,17 @@ html:not([data-motion='full']) .lab-stills img {
 html[data-motion='full'] .lab > * {
   opacity: calc(var(--mix) - var(--fill));
 }
-html[data-motion='full'][data-scene='ready'] .hero-still {
-  opacity: 0;
-  transition: opacity 0.6s var(--ease);
+html[data-motion='pending'] .hero-still,
+html[data-motion='full'] .hero-still {
+  display: none;
+}
+@keyframes scene-in {
+  from {
+    opacity: 0;
+  }
+}
+html[data-scene='ready'] .stage-canvas {
+  animation: scene-in 0.9s var(--ease) backwards;
 }
 @media (prefers-reduced-motion: reduce) {
   * {

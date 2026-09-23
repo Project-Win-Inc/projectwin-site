@@ -13,8 +13,13 @@ if (stage && shouldRun3D(readCapability(window))) {
       .catch(() => {
         html.dataset.motion = 'static';
       });
-  if ('requestIdleCallback' in window) requestIdleCallback(start, { timeout: 1500 });
-  else setTimeout(start, 200);
+  // Wait for load (HTML, CSS, fonts) so the 3D bundle never competes with first render.
+  const idle = () =>
+    'requestIdleCallback' in window
+      ? requestIdleCallback(start, { timeout: 1500 })
+      : setTimeout(start, 200);
+  if (document.readyState === 'complete') idle();
+  else window.addEventListener('load', idle, { once: true });
 } else {
   html.dataset.motion = 'static';
 }

@@ -1,7 +1,16 @@
+/* Self-hosted subset of Schibsted Grotesk (OFL), built by scripts/subset-font.sh. */
+@font-face {
+  font-family: 'Schibsted Grotesk Variable';
+  src: url('/fonts/schibsted-grotesk-subset.woff2') format('woff2-variations');
+  font-weight: 500 900;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
   --canvas: #ecebe6;
   --ink: #141414;
-  --mute: #6b6b6b;
+  --mute: #686868; /* 4.67:1 on canvas (AA); #6b6b6b was 4.46 */
   --hairline: #d4d3ce;
   --amber: #ffae03;
   --sans: 'Schibsted Grotesk Variable', 'Schibsted Grotesk', ui-sans-serif, system-ui, sans-serif;

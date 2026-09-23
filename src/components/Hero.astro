@@ -6,13 +6,8 @@ import { site } from '../content/site';
 
 <section class="hero wrap" aria-labelledby="wordmark">
   <span class="index">(01)</span>
-  <h1 id="wordmark" class="wordmark" data-reveal>
-    <span>
-      <span>Project</span>
-    </span>{' '}
-    <span>
-      <span>Win</span>
-    </span>
+  <h1 id="wordmark" class="wordmark">
+    <span class="line">Project</span> <span class="line">Win</span>
   </h1>
   <p class="hero-line">{site.hero.line}</p>
   <Image
@@ -21,8 +16,8 @@ import { site } from '../content/site';
     alt=""
     data-still="p000"
     widths={[480, 960, 1280]}
-    sizes="(max-width: 760px) 78vw, 44vw"
+    sizes="(max-width: 760px) 100vw, 44vw"
     format="webp"
-    loading="eager"
+    loading="lazy"
   />
 </section>

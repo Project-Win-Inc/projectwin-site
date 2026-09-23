@@ -99,3 +99,33 @@ test('render loop stops when the scene is offscreen', async ({ page }) => {
   await page.waitForTimeout(1000);
   expect(await frames()).toBe(a);
 });
+
+test('largest contentful paint is the wordmark, not an image', async ({ page }) => {
+  await page.addInitScript(() => {
+    (window as unknown as { __lcp: string[] }).__lcp = [];
+    new PerformanceObserver((list) => {
+      for (const e of list.getEntries() as (PerformanceEntry & { element?: Element })[]) {
+        (window as unknown as { __lcp: string[] }).__lcp.push(
+          e.element ? e.element.tagName + (e.element.closest('h1') ? ':in-h1' : '') : 'none',
+        );
+      }
+    }).observe({ type: 'largest-contentful-paint', buffered: true });
+  });
+  await page.goto('/');
+  await expect(page.locator('html')).toHaveAttribute('data-scene', 'ready', { timeout: 10_000 });
+  const lcp = await page.evaluate(() => (window as unknown as { __lcp: string[] }).__lcp);
+  expect(lcp.at(-1)).toMatch(/H1|:in-h1/);
+});
+
+test('3D code is requested only after the page has loaded', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.locator('html')).toHaveAttribute('data-scene', 'ready', { timeout: 10_000 });
+  const t = await page.evaluate(() => {
+    const nav = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
+    const three = performance
+      .getEntriesByType('resource')
+      .find((r) => /\/_astro\/three\.[^/]*\.js$/.test(r.name));
+    return { load: nav.loadEventEnd, three: three?.startTime ?? -1 };
+  });
+  expect(t.three).toBeGreaterThanOrEqual(t.load);
+});
