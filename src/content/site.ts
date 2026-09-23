@@ -32,7 +32,7 @@ export const site: Site = {
     formed: '2025-04-04',
     agentAddress: '1500 N Grant St Ste R, Denver, CO 80203',
   },
-  contactEmail: 'hello@projectwin.cloud',
+  contactEmail: 'projectwinteam@gmail.com',
   meta: {
     title: 'Project Win: a two-founder product lab',
     description:

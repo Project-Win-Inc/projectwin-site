@@ -72,4 +72,7 @@ describe('site content', () => {
     expect(site.hero.line).not.toMatch(/Denver|Maryland/);
     expect(site.meta.title + site.meta.description).not.toMatch(/Denver|Maryland/);
   });
+  it('contact address is one that receives mail (no forwarding on projectwin.cloud)', () => {
+    expect(site.contactEmail).toBe('projectwinteam@gmail.com');
+  });
 });
