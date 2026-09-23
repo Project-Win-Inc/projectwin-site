@@ -79,5 +79,5 @@ export const site: Site = {
     },
     { title: 'Simplicity and elegance', text: 'What we create should make life lighter.' },
   ],
-  founders: ['Ian Cross', 'Abb'],
+  founders: ['Ian Cross', 'Abb Kapoor'],
 };

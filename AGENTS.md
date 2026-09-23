@@ -3,6 +3,8 @@
 The public site for Project Win LLC at projectwin.cloud. Spec and plan live in the Project Win vault:
 `project-win/projects/studio-site/2026-09-22-projectwin-site-design.md` and `...-plan.md`.
 
+**Read `docs/operations.md` first**: file map, motion modes, quality gates, deploy, DNS and rollback.
+
 - Copy lives only in `src/content/site.ts`. It must be true, and it must have no em or en dashes.
 - Animation math lives in `src/scene/timeline.ts` (pure, unit tested). `scene.ts` only applies it.
 - Run `npm run check && npm test && npm run build && npm run budget && npm run e2e` before any PR.
