@@ -83,9 +83,11 @@ a:hover {
 .stage-canvas {
   opacity: calc(1 - var(--seal));
   position: fixed;
-  inset: 0;
+  top: 0;
+  left: 0;
   width: 100vw;
   height: 100vh;
+  height: 100lvh; /* covers the screen with mobile toolbars shown or hidden, without resizing */
   z-index: 0;
   pointer-events: none;
 }
@@ -352,12 +354,14 @@ html:not([data-motion='full']) [data-stage] {
 html:not([data-motion='full']) .lab {
   background: var(--ink);
 }
-html:not([data-motion='full']) .lab-stills {
+/* Stills only in true static mode (or no JS); 'pending' stays text-only so they don't
+   compete with the font for bandwidth before first paint. */
+html:not([data-motion='full']):not([data-motion='pending']) .lab-stills {
   display: flex;
   gap: var(--gutter);
   margin-bottom: 3rem;
 }
-html:not([data-motion='full']) .lab-stills img {
+html:not([data-motion='full']):not([data-motion='pending']) .lab-stills img {
   width: min(40vw, 420px);
   height: auto;
 }

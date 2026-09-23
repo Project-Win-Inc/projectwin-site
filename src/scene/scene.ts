@@ -127,8 +127,9 @@ export function mountLabScene(
   const ready = new Promise<void>((r) => (resolveReady = r));
 
   function resize() {
-    const w = window.innerWidth;
-    const h = window.innerHeight;
+    // Render at the canvas's own CSS box so the frame is never stretched.
+    const w = canvas.clientWidth || window.innerWidth;
+    const h = canvas.clientHeight || window.innerHeight;
     renderer.setSize(w, h, false);
     camera.aspect = w / h;
     const distance = cameraDistance(FOV, camera.aspect);

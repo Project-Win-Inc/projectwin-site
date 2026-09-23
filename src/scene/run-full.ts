@@ -4,10 +4,23 @@ import Lenis from 'lenis';
 import { mountLabScene } from './scene';
 import { backgroundMix, fillMix } from './timeline';
 
+/** The later section the reader is looking at, and where it sits, before the pin adds height. */
+function readingAnchor(): { el: Element; top: number } | null {
+  for (const el of document.querySelectorAll('#dreamcatcher, #values, #contact')) {
+    const r = el.getBoundingClientRect();
+    if (r.bottom > 0 && r.top < window.innerHeight) return { el, top: r.top };
+  }
+  return null;
+}
+
 export async function runFull(stage: HTMLElement) {
   gsap.registerPlugin(ScrollTrigger);
+  ScrollTrigger.config({ ignoreMobileResize: true });
   const html = document.documentElement;
   const lab = stage.querySelector<HTMLElement>('[data-lab]')!;
+  // Captured before anything changes layout: a reader who scrolled (or followed #contact)
+  // while the 3D code downloaded must not be moved by the pin's extra 200vh.
+  const anchor = readingAnchor();
 
   const canvas = document.createElement('canvas');
   canvas.className = 'stage-canvas';
@@ -19,6 +32,9 @@ export async function runFull(stage: HTMLElement) {
   lenis.on('scroll', ScrollTrigger.update);
   gsap.ticker.add((t) => lenis.raf(t * 1000));
   gsap.ticker.lagSmoothing(0);
+
+  // Final layout (lab stills hidden, transparent lab) before the pin is measured.
+  html.dataset.motion = 'full';
 
   const setMix = (p: number) => {
     stage.style.setProperty('--mix', String(backgroundMix(p)));
@@ -40,15 +56,11 @@ export async function runFull(stage: HTMLElement) {
     },
   });
 
-  // The pin adds 200vh of spacer after the browser already jumped to any #anchor,
-  // which leaves the old scroll position pointing into the pinned lab. Re-apply it.
-  const hashTarget = location.hash
-    ? document.getElementById(decodeURIComponent(location.hash.slice(1)))
-    : null;
-  if (hashTarget) {
-    ScrollTrigger.refresh(); // lay out the pin spacer now, not on the next tick
-    lenis.resize(); // Lenis caches the scroll limit; the page just got taller
-    lenis.scrollTo(hashTarget, { immediate: true, force: true });
+  ScrollTrigger.refresh(); // lay out the pin spacer now, not on the next tick
+  lenis.resize(); // Lenis caches the scroll limit; the page just got taller
+  if (anchor) {
+    const y = anchor.el.getBoundingClientRect().top + window.scrollY - anchor.top;
+    lenis.scrollTo(y, { immediate: true, force: true });
   }
 
   let onScreen = true;
@@ -64,12 +76,19 @@ export async function runFull(stage: HTMLElement) {
     (e) => scene.setPointer((e.clientX / innerWidth) * 2 - 1, (e.clientY / innerHeight) * 2 - 1),
     { passive: true },
   );
+  // ScrollTrigger refreshes itself on real resizes and ignores mobile toolbar show/hide.
+  // The scene only re-frames when its own box changes (the canvas is 100lvh, so toolbars
+  // do not change it on phones).
+  let box = `${canvas.clientWidth}x${canvas.clientHeight}`;
   let resizeTimer = 0;
   window.addEventListener('resize', () => {
     clearTimeout(resizeTimer);
     resizeTimer = window.setTimeout(() => {
-      scene.resize();
-      ScrollTrigger.refresh();
+      const next = `${canvas.clientWidth}x${canvas.clientHeight}`;
+      if (next !== box) {
+        box = next;
+        scene.resize();
+      }
     }, 120);
   });
 

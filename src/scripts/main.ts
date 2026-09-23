@@ -5,7 +5,8 @@ const html = document.documentElement;
 const stage = document.querySelector<HTMLElement>('[data-stage]');
 
 if (stage && shouldRun3D(readCapability(window))) {
-  html.dataset.motion = 'full';
+  // Stay 'pending' (static styling, fully readable) until run-full has built the pin.
+  html.dataset.motion = 'pending';
   initReveal(document);
   const start = () =>
     import('../scene/run-full')

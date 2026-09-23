@@ -138,3 +138,74 @@ test('software-rendered WebGL (no GPU) falls back to static stills', async ({ pa
   await expect(page.locator('canvas.stage-canvas')).toHaveCount(0);
   await expect(page.locator('img[data-still="p000"]')).toBeVisible();
 });
+
+test3d('reading position is kept when the 3D scene arrives late', async ({ page }) => {
+  let release!: () => void;
+  const gate = new Promise<void>((r) => (release = r));
+  await page.route(/\/_astro\/three\..*\.js$/, async (route) => {
+    await gate;
+    await route.continue();
+  });
+  await page.goto('/');
+  await page.locator('#values').evaluate((el) => el.scrollIntoView({ block: 'start' }));
+  const before = await page.locator('#values').evaluate((el) => el.getBoundingClientRect().top);
+  release();
+  await expect(page.locator('html')).toHaveAttribute('data-scene', 'ready', { timeout: 10_000 });
+  await page.waitForTimeout(300);
+  const after = await page.locator('#values').evaluate((el) => el.getBoundingClientRect().top);
+  expect(Math.abs(after - before)).toBeLessThan(4);
+});
+
+test3d(
+  'header Contact link lands on the contact section right after the scene loads',
+  async ({ page }) => {
+    await page.goto('/');
+    await expect(page.locator('html')).toHaveAttribute('data-scene', 'ready', { timeout: 10_000 });
+    await page.getByRole('link', { name: 'Contact' }).click();
+    await page.waitForTimeout(2000);
+    await expect(page.locator('#contact')).toBeInViewport();
+  },
+);
+
+test3d('lab section stays readable while the 3D code is still downloading', async ({ page }) => {
+  await page.route(/\/_astro\/three\..*\.js$/, () => {
+    /* never answer: a stalled request */
+  });
+  await page.goto('/');
+  await page.waitForTimeout(1500);
+  await page.locator('#lab').scrollIntoViewIfNeeded();
+  const lab = await page.locator('#lab').evaluate((el) => ({
+    opacity: Number(getComputedStyle(el.querySelector('h2')!).opacity),
+    bg: getComputedStyle(el).backgroundColor,
+  }));
+  expect(lab.opacity).toBe(1);
+  expect(lab.bg).toBe('rgb(20, 20, 20)');
+});
+
+test3d(
+  'touch: toolbar-sized height changes do not re-measure the pin or distort the scene',
+  async ({ page }, info) => {
+    test3d.skip(info.project.name !== 'mobile', 'mobile browser toolbars only');
+    const vp = page.viewportSize()!;
+    await page.goto('/');
+    await expect(page.locator('html')).toHaveAttribute('data-scene', 'ready', { timeout: 10_000 });
+    await page.mouse.wheel(0, 300);
+    await page.waitForTimeout(400);
+    // The pin's length is what must not change (Chromium's emulation also shrinks svh-based
+    // sections, which a real iOS toolbar does not).
+    const pinLength = () =>
+      page.evaluate(() => (document.querySelector('.pin-spacer') as HTMLElement).offsetHeight);
+    const pinBefore = await pinLength();
+    await page.setViewportSize({ width: vp.width, height: Math.round(vp.height * 0.9) });
+    await page.waitForTimeout(600);
+    const r = await page.evaluate(() => {
+      const c = document.querySelector('canvas.stage-canvas') as HTMLCanvasElement;
+      return {
+        buffer: c.width / c.height,
+        box: c.clientWidth / c.clientHeight,
+      };
+    });
+    expect(await pinLength()).toBe(pinBefore);
+    expect(Math.abs(r.buffer - r.box) / r.box).toBeLessThan(0.02);
+  },
+);
