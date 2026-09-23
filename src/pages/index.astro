@@ -1,16 +1,23 @@
 ---
+import Base from '../layouts/Base.astro';
+import Header from '../components/Header.astro';
+import Hero from '../components/Hero.astro';
+import Lab from '../components/Lab.astro';
+import DreamCatcher from '../components/DreamCatcher.astro';
+import Values from '../components/Values.astro';
+import Colophon from '../components/Colophon.astro';
 ---
 
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="icon" href="/favicon.ico" />
-    <meta name="viewport" content="width=device-width" />
-    <meta name="generator" content={Astro.generator} />
-    <title>Astro</title>
-  </head>
-  <body>
-    <h1>Astro</h1>
-  </body>
-</html>
+<Base>
+  <Header />
+  <main id="main">
+    <div data-stage>
+      <Hero />
+      <Lab />
+    </div>
+    <DreamCatcher />
+    <Values />
+  </main>
+  <Colophon />
+  <script src="../scripts/main.ts"></script>
+</Base>

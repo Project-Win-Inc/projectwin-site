@@ -8,7 +8,7 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
-    "preview": "astro preview --port 4321",
+    "preview": "astro preview --port 4321 --ignore-lock",
     "check": "astro check && prettier --check .",
     "test": "vitest run",
     "e2e": "playwright test",

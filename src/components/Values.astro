@@ -1,0 +1,19 @@
+---
+import { site } from '../content/site';
+---
+
+<section id="values" class="values wrap" aria-labelledby="values-h">
+  <span class="index">(04)</span>
+  <h2 id="values-h" class="meta">
+    What we value
+  </h2>
+  <ol>
+    {site.values.map((v, i) => (
+      <li>
+        <span class="index">{String(i + 1).padStart(2, '0')}</span>
+        <h3>{v.title}</h3>
+        <p>{v.text}</p>
+      </li>
+    ))}
+  </ol>
+</section>

@@ -1,0 +1,28 @@
+---
+import { Image } from 'astro:assets';
+import p000 from '../assets/stills/p000.png';
+import { site } from '../content/site';
+---
+
+<section class="hero wrap" aria-labelledby="wordmark">
+  <span class="index">(01)</span>
+  <h1 id="wordmark" class="wordmark" data-reveal>
+    <span>
+      <span>Project</span>
+    </span>{' '}
+    <span>
+      <span>Win</span>
+    </span>
+  </h1>
+  <p class="hero-line">{site.hero.line}</p>
+  <Image
+    class="hero-still"
+    src={p000}
+    alt=""
+    data-still="p000"
+    widths={[480, 960, 1280]}
+    sizes="(max-width: 760px) 78vw, 44vw"
+    format="webp"
+    loading="eager"
+  />
+</section>

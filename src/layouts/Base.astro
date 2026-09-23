@@ -1,0 +1,64 @@
+---
+import '@fontsource-variable/schibsted-grotesk/wght.css';
+import '@fontsource/jetbrains-mono/400.css';
+import '../styles/global.css';
+import fontUrl from '@fontsource-variable/schibsted-grotesk/files/schibsted-grotesk-latin-wght-normal.woff2?url';
+import { site } from '../content/site';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+const { title = site.meta.title, description = site.meta.description } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const beacon = import.meta.env.PUBLIC_CF_BEACON_TOKEN;
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'Project Win',
+  legalName: site.entity.legalName,
+  url: 'https://projectwin.cloud',
+  logo: 'https://projectwin.cloud/logo-mark.png',
+  foundingDate: site.entity.formed,
+  founder: site.founders.map((name) => ({ '@type': 'Person', name })),
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: 'Denver',
+    addressRegion: 'CO',
+    addressCountry: 'US',
+  },
+  email: site.contactEmail,
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="preload" as="font" type="font/woff2" href={fontUrl} crossorigin />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content="https://projectwin.cloud/og.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="theme-color" content="#ecebe6" />
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)}></script>
+    {beacon && <script
+      defer
+      src="https://static.cloudflareinsights.com/beacon.min.js"
+      data-cf-beacon={JSON.stringify({ token: beacon })}
+    ></script>}
+  </head>
+  <body>
+    <a class="skip" href="#main">
+      Skip to content
+    </a>
+    <slot />
+  </body>
+</html>
