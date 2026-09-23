@@ -1,0 +1,7 @@
+dist
+.astro
+src/assets
+package-lock.json
+playwright-report
+test-results
+.lighthouseci
