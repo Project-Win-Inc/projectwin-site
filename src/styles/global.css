@@ -140,15 +140,15 @@ a:hover {
   right: var(--gutter);
   top: 50%;
   width: min(44vw, 640px);
+  height: auto;
   translate: 0 -50%;
   z-index: -1;
 }
 @media (max-width: 760px) {
   .hero-still {
-    width: 78vw;
-    top: auto;
-    bottom: 6rem;
-    translate: 0 0;
+    width: 100vw;
+    right: 0;
+    top: 56%;
   }
 }
 @media (max-height: 480px) {

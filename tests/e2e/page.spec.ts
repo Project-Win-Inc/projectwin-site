@@ -61,3 +61,14 @@ test('header stays on one row at phone width, keeping the legal tagline', async 
   expect(box!.height).toBeLessThanOrEqual(56);
   await expect(page.getByText('Colorado LLC · est. 2025')).toBeVisible();
 });
+
+test('still frames keep their aspect ratio', async ({ page }) => {
+  await page.goto('/');
+  const img = page.locator('img[data-still="p000"]');
+  await expect(img).toBeVisible();
+  const { rendered, natural } = await img.evaluate((el: HTMLImageElement) => ({
+    rendered: el.clientWidth / el.clientHeight,
+    natural: el.naturalWidth / el.naturalHeight,
+  }));
+  expect(Math.abs(rendered - natural) / natural).toBeLessThan(0.02);
+});
