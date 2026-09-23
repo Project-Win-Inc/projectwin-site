@@ -43,3 +43,30 @@ jobs:
           path: |
             .lighthouseci
             test-results
+  deploy:
+    # GitHub Pages, from main only, after every quality gate has passed.
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: quality
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+      contents: read
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - run: npm ci
+      - run: npm run build
+        env:
+          PUBLIC_CF_BEACON_TOKEN: ${{ vars.PUBLIC_CF_BEACON_TOKEN }}
+      - uses: actions/upload-pages-artifact@v3
+        with: { path: dist }
+      - id: deployment
+        uses: actions/deploy-pages@v4
