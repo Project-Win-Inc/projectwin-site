@@ -21,6 +21,25 @@ jobs:
       - run: npm run budget
       - run: npm run e2e
       - run: npx lhci autorun
+      - name: Lighthouse metrics summary
+        if: always()
+        run: |
+          node -e '
+          const fs = require("fs");
+          for (const f of fs.readdirSync(".lighthouseci").filter((f) => f.startsWith("lhr-"))) {
+            const d = JSON.parse(fs.readFileSync(".lighthouseci/" + f));
+            const a = d.audits, n = (k) => Math.round(a[k].numericValue);
+            console.log(d.finalDisplayedUrl, "perf", d.categories.performance.score,
+              "FCP", n("first-contentful-paint"), "LCP", n("largest-contentful-paint"),
+              "TBT", n("total-blocking-time"), "SI", n("speed-index"),
+              "CLS", a["cumulative-layout-shift"].numericValue.toFixed(3),
+              "bench", Math.round(d.environment.benchmarkIndex));
+          }'
       - uses: actions/upload-artifact@v4
         if: always()
-        with: { name: reports, path: "playwright-report\n.lighthouseci" }
+        with:
+          name: reports
+          include-hidden-files: true
+          path: |
+            .lighthouseci
+            test-results
