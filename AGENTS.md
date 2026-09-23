@@ -9,6 +9,8 @@ The public site for Project Win LLC at projectwin.cloud. Spec and plan live in t
 - Deploys: GitHub Pages (public repo), from `main` only, after every CI gate passes (`.github/workflows/ci.yml`).
   Custom domain projectwin.cloud is set in the repo's Pages settings; DNS is at Hostinger. DNS changes need Ian's go.
   There are no per-PR previews; preview locally with `npm run build && npm run preview`.
+- Lighthouse: `npx lhci autorun` locally checks the real 3D path (LCP 1500ms budget). CI has no GPU and checks the
+  still-frame fallback with `lighthouserc.ci.json` (LCP 2000ms). Run the local one before any visual or loading change.
 - Regenerate stills (`npm run stills`) whenever `src/scene/*` changes, and commit them.
 
 ## Development
