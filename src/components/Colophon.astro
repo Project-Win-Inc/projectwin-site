@@ -1,0 +1,28 @@
+---
+import { site } from '../content/site';
+const e = site.entity;
+---
+
+<footer id="contact" class="colophon wrap dark">
+  <section aria-labelledby="founders-h">
+    <span class="index">(05)</span>
+    <h2 id="founders-h" class="meta" style="margin-bottom: 1rem">
+      Founders
+    </h2>
+    <p class="founders">
+      {site.founders.map((f) => (
+        <span>{f}</span>
+      ))}
+    </p>
+  </section>
+  <div class="legal meta">
+    <span>
+      {e.legalName}, a {e.state} {e.kind} · Entity ID {e.id}
+    </span>
+    <span>Registered agent: {e.agentAddress}</span>
+    <span>
+      <a href={`mailto:${site.contactEmail}`}>{site.contactEmail}</a> ·{' '}
+      <a href="/privacy">Privacy</a> · <a href="/terms">Terms</a>
+    </span>
+  </div>
+</footer>

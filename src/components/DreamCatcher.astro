@@ -1,0 +1,51 @@
+---
+import { Image } from 'astro:assets';
+import s1 from '../assets/dreamcatcher/screen-1.png';
+import s2 from '../assets/dreamcatcher/screen-2.png';
+import { site } from '../content/site';
+const p = site.product;
+---
+
+<section id="dreamcatcher" class="dreamcatcher wrap" aria-labelledby="dc-h">
+  <div class="copy">
+    <span class="index" style="color: var(--ink)">
+      (03)
+    </span>
+    <p class="meta">
+      {p.status} · {p.fact}
+    </p>
+    <h2 id="dc-h" data-reveal>
+      <span>
+        <span>{p.name}</span>
+      </span>
+    </h2>
+    <p class="line">{p.line}</p>
+    <ul>
+      <li>
+        <a href={p.links.appStore}>App Store</a>
+      </li>
+      <li>
+        <a href={p.links.play}>Google Play</a>
+      </li>
+      <li>
+        <a href={p.links.site}>thedreamcatcher.ai</a>
+      </li>
+    </ul>
+  </div>
+  <div class="screens">
+    <Image
+      src={s1}
+      alt="DreamCatcher capture screen with a record button"
+      widths={[300, 600]}
+      sizes="20vw"
+      format="webp"
+    />
+    <Image
+      src={s2}
+      alt="A DreamCatcher dream entry with its generated image"
+      widths={[300, 600]}
+      sizes="20vw"
+      format="webp"
+    />
+  </div>
+</section>

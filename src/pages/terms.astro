@@ -1,0 +1,23 @@
+---
+import Base from '../layouts/Base.astro';
+import { site } from '../content/site';
+---
+
+<Base title="Terms · Project Win" description="Terms for projectwin.cloud.">
+  <main id="main" class="wrap" style="max-width: 44rem; padding-block: 4rem">
+    <p class="meta">
+      <a href="/">Project Win</a>
+    </p>
+    <h1 style="font-size: var(--fs-display); font-weight: 900; letter-spacing: -0.035em; margin-block: 1rem 2rem">
+      Terms
+    </h1>
+    <p>
+      This site is published by {site.entity.legalName}, a {site.entity.state}
+      {site.entity.kind}. Its content is provided for information only. DreamCatcher is governed by
+      its own terms, linked from thedreamcatcher.ai.
+    </p>
+    <p class="meta" style="margin-top: 3rem">
+      Last updated September 2026
+    </p>
+  </main>
+</Base>

@@ -6,7 +6,11 @@ The public site for Project Win LLC at projectwin.cloud. Spec and plan live in t
 - Copy lives only in `src/content/site.ts`. It must be true, and it must have no em or en dashes.
 - Animation math lives in `src/scene/timeline.ts` (pure, unit tested). `scene.ts` only applies it.
 - Run `npm run check && npm test && npm run build && npm run budget && npm run e2e` before any PR.
-- Deploys: CI deploys PR previews and production to Netlify. DNS is at Hostinger. DNS changes need Ian's go.
+- Deploys: GitHub Pages (public repo), from `main` only, after every CI gate passes (`.github/workflows/ci.yml`).
+  Custom domain projectwin.cloud is set in the repo's Pages settings; DNS is at Hostinger. DNS changes need Ian's go.
+  There are no per-PR previews; preview locally with `npm run build && npm run preview`.
+- Lighthouse: `npx lhci autorun` locally checks the real 3D path (LCP 1500ms budget). CI has no GPU and checks the
+  still-frame fallback with `lighthouserc.ci.json` (LCP 2000ms). Run the local one before any visual or loading change.
 - Regenerate stills (`npm run stills`) whenever `src/scene/*` changes, and commit them.
 
 ## Development

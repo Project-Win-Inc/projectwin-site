@@ -1,0 +1,22 @@
+---
+import { Image } from 'astro:assets';
+import p040 from '../assets/stills/p040.png';
+import p064 from '../assets/stills/p064.png';
+import { site } from '../content/site';
+---
+
+<section id="lab" class="lab wrap dark" data-lab aria-labelledby="lab-h">
+  <div class="lab-stills" aria-hidden="true">
+    <Image src={p040} alt="" data-still="p040" widths={[420, 840]} sizes="40vw" format="webp" />
+    <Image src={p064} alt="" data-still="p064" widths={[420, 840]} sizes="40vw" format="webp" />
+  </div>
+  <span class="index">(02)</span>
+  <h2 id="lab-h" data-reveal>
+    <span>
+      <span>{site.lab.headline}</span>
+    </span>
+  </h2>
+  {site.lab.body.map((p) => (
+    <p>{p}</p>
+  ))}
+</section>
