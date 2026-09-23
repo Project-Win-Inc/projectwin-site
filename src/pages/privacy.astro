@@ -1,6 +1,8 @@
 ---
 import Base from '../layouts/Base.astro';
 import { site } from '../content/site';
+// Same switch as the beacon in Base.astro, so this page never claims analytics that aren't running.
+const analytics = !!import.meta.env.PUBLIC_CF_BEACON_TOKEN;
 ---
 
 <Base title="Privacy · Project Win" description="How projectwin.cloud handles data.">
@@ -11,10 +13,14 @@ import { site } from '../content/site';
     <h1 style="font-size: var(--fs-display); font-weight: 900; letter-spacing: -0.035em; margin-block: 1rem 2rem">
       Privacy
     </h1>
-    <p>
-      This site does not use cookies and has no forms. We measure visits with Cloudflare Web
-      Analytics, which counts page views without cookies and without identifying you.
-    </p>
+    {analytics ? (
+      <p>
+        This site does not use cookies and has no forms. We measure visits with Cloudflare Web
+        Analytics, which counts page views without cookies and without identifying you.
+      </p>
+    ) : (
+      <p>This site does not use cookies or analytics, and has no forms.</p>
+    )}
     <p style="margin-top: 1rem">
       DreamCatcher has its own privacy policy, linked from thedreamcatcher.ai. Questions:
       <a href={`mailto:${site.contactEmail}`}>{site.contactEmail}</a>.

@@ -74,3 +74,13 @@ test('still frames keep their aspect ratio', async ({ page }) => {
   }));
   expect(Math.abs(rendered - natural) / natural).toBeLessThan(0.02);
 });
+
+test('privacy page only claims analytics when the analytics beacon is actually on the site', async ({
+  page,
+}) => {
+  await page.goto('/');
+  const beaconOn = (await page.locator('script[src*="cloudflareinsights"]').count()) > 0;
+  await page.goto('/privacy');
+  const text = await page.locator('main').innerText();
+  expect(/Cloudflare Web Analytics/.test(text)).toBe(beaconOn);
+});

@@ -64,4 +64,12 @@ describe('site content', () => {
     });
     expect(missing).toEqual([]);
   });
+  it('founders are Ian Cross and Abb (first name only, his preference)', () => {
+    expect(site.founders).toEqual(['Ian Cross', 'Abb']);
+    expect(JSON.stringify(site)).not.toContain('Kapoor');
+  });
+  it('makes no location claim beyond the Colorado LLC', () => {
+    expect(site.hero.line).not.toMatch(/Denver|Maryland/);
+    expect(site.meta.title + site.meta.description).not.toMatch(/Denver|Maryland/);
+  });
 });

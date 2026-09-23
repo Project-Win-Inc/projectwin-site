@@ -34,13 +34,13 @@ export const site: Site = {
   },
   contactEmail: 'hello@projectwin.cloud',
   meta: {
-    title: 'Project Win: a product lab in Denver',
+    title: 'Project Win: a two-founder product lab',
     description:
-      'Project Win LLC is a two-founder product lab in Denver, Colorado. We solve our own problems and ship the solutions worth sharing. Makers of DreamCatcher.',
+      'Project Win LLC is a two-founder product lab. We solve our own problems and ship the solutions worth sharing. Makers of DreamCatcher.',
   },
   header: { tagline: 'Colorado LLC · est. 2025' },
   hero: {
-    line: 'A two-founder product lab in Denver. We solve our own problems, and ship the solutions worth sharing.',
+    line: 'A two-founder product lab. We solve our own problems, and ship the solutions worth sharing.',
   },
   lab: {
     headline: "Most experiments stay in the lab. That's the point.",
@@ -79,5 +79,5 @@ export const site: Site = {
     },
     { title: 'Simplicity and elegance', text: 'What we create should make life lighter.' },
   ],
-  founders: ['Ian Cross', 'Abb Kapoor'],
+  founders: ['Ian Cross', 'Abb'],
 };
