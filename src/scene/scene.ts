@@ -15,7 +15,15 @@ import {
 } from 'three';
 import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry.js';
 import { SURVIVOR, TILE, gridPositions, tileName } from './layout';
-import { TILT_DEG, centerInGrid, fillScale, stageOffset, tileStateAt, viewSize } from './timeline';
+import {
+  TILT_DEG,
+  cameraDistance,
+  centerInGrid,
+  fillScale,
+  stageOffset,
+  tileStateAt,
+  viewSize,
+} from './timeline';
 
 export interface LabScene {
   setProgress(p: number): void;
@@ -28,7 +36,6 @@ export interface LabScene {
 }
 
 const FOV = 30;
-const DISTANCE = 14;
 const MAX_TILT = (6 * Math.PI) / 180;
 
 function shadowTexture(): CanvasTexture {
@@ -60,7 +67,7 @@ export function mountLabScene(
 
   const scene = new Scene();
   const camera = new PerspectiveCamera(FOV, 1, 0.1, 100);
-  camera.position.set(0, 0, DISTANCE);
+  camera.position.set(0, 0, cameraDistance(FOV, 1));
   scene.add(new HemisphereLight(0xffffff, 0xcfcac0, 1.1));
   const key = new DirectionalLight(0xffffff, 2.2);
   key.position.set(-4, 6, 8);
@@ -124,8 +131,10 @@ export function mountLabScene(
     const h = window.innerHeight;
     renderer.setSize(w, h, false);
     camera.aspect = w / h;
+    const distance = cameraDistance(FOV, camera.aspect);
+    camera.position.z = distance;
     camera.updateProjectionMatrix();
-    const view = viewSize(FOV, DISTANCE, camera.aspect);
+    const view = viewSize(FOV, distance, camera.aspect);
     // Stills are framed on the grid itself; the live page offsets it beside the wordmark.
     const offset = opts.centered ? { x: 0, y: 0 } : stageOffset(view, camera.aspect);
     stage.position.set(offset.x, offset.y, 0);

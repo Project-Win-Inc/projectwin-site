@@ -5,6 +5,8 @@ import {
   FILL_START,
   TILT_DEG,
   backgroundMix,
+  cameraDistance,
+  fillMix,
   centerInGrid,
   fillScale,
   stageOffset,
@@ -71,11 +73,34 @@ describe('timeline', () => {
     expect(backgroundMix(1)).toBe(1);
     expect(backgroundMix(0.175)).toBeCloseTo(0.5, 6);
   });
-  it('desktop shifts the grid right, portrait shifts it down', () => {
+  it('desktop shifts the grid right; portrait centres it just above middle, clear of the copy', () => {
     expect(stageOffset(view, 16 / 9).x).toBeGreaterThan(0);
-    const tall = viewSize(30, 14, 9 / 19.5);
-    const o = stageOffset(tall, 9 / 19.5);
+    const aspect = 9 / 19.5;
+    const tall = viewSize(30, cameraDistance(30, aspect), aspect);
+    const o = stageOffset(tall, aspect);
     expect(o.x).toBe(0);
-    expect(o.y).toBeLessThan(0);
+    expect(o.y).toBeGreaterThan(0);
+    expect(o.y).toBeLessThan(tall.h * 0.15);
+  });
+  it('camera keeps 14 on wide screens and backs off so the grid fits a phone', () => {
+    expect(cameraDistance(30, 16 / 9)).toBe(14);
+    const aspect = 9 / 19.5;
+    const tall = viewSize(30, cameraDistance(30, aspect), aspect);
+    const rotatedGridWidth = 4.9;
+    expect(rotatedGridWidth).toBeLessThanOrEqual(tall.w * 0.85 + 1e-9);
+  });
+  it('lab copy fades out as the survivor fills the screen', () => {
+    expect(fillMix(0)).toBe(0);
+    expect(fillMix(FILL_START)).toBe(0);
+    expect(fillMix(0.8)).toBe(1);
+    expect(fillMix(1)).toBe(1);
+  });
+  it('desktop grid sits clear of the left-hand copy column', () => {
+    // 4 tiles + 3 gaps = 4.54 wide; half, plus ~0.13 for the 8 degree tilt.
+    const halfGrid = 2.4;
+    // Left edge must start right of 58% of the viewport (headline ends near 55%).
+    expect(offset.x - halfGrid).toBeGreaterThan(view.w * 0.08);
+    // ...and the right edge must stay on screen.
+    expect(offset.x + halfGrid).toBeLessThan(view.w / 2);
   });
 });

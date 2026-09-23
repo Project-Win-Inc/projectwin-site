@@ -66,11 +66,19 @@ a:hover {
 /* Stage: hero + lab share one background that shifts canvas -> ink via --mix (0..1). */
 [data-stage] {
   --mix: 0;
+  --fill: 0;
+  /* 0 until the survivor tile covers the screen (fill 0.9..1), then the stage becomes the real amber. */
+  --seal: clamp(0, (var(--fill) - 0.9) * 10, 1);
   position: relative;
-  background: color-mix(in srgb, var(--ink) calc(var(--mix) * 100%), var(--canvas));
+  background: color-mix(
+    in srgb,
+    var(--amber) calc(var(--seal) * 100%),
+    color-mix(in srgb, var(--ink) calc(var(--mix) * 100%), var(--canvas))
+  );
   isolation: isolate;
 }
 .stage-canvas {
+  opacity: calc(1 - var(--seal));
   position: fixed;
   inset: 0;
   width: 100vw;
@@ -178,7 +186,7 @@ a:hover {
   font-weight: 900;
   line-height: 0.95;
   letter-spacing: -0.035em;
-  max-width: 16ch;
+  max-width: 13ch;
 }
 .lab p {
   max-width: 44ch;
@@ -345,6 +353,10 @@ html:not([data-motion='full']) .lab-stills {
 html:not([data-motion='full']) .lab-stills img {
   width: min(40vw, 420px);
   height: auto;
+}
+/* Lab copy fades in with the darkening and out as the amber fills (full mode only). */
+html[data-motion='full'] .lab > * {
+  opacity: calc(var(--mix) - var(--fill));
 }
 html[data-motion='full'][data-scene='ready'] .hero-still {
   opacity: 0;

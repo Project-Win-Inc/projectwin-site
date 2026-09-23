@@ -19,9 +19,19 @@ export function viewSize(fovDeg: number, distance: number, aspect: number) {
   return { w: h * aspect, h };
 }
 
+const BASE_DISTANCE = 14;
+const GRID_SPAN = 4.9; // rotated grid width in world units
+const FIT = 0.85;
+
+/** Camera distance: 14 on wide screens; further back on narrow ones so the grid fits 85% of the width. */
+export function cameraDistance(fovDeg: number, aspect: number) {
+  const needed = GRID_SPAN / FIT / (2 * Math.tan(rad(fovDeg) / 2) * aspect);
+  return Math.max(BASE_DISTANCE, needed);
+}
+
 /** Where the grid sits in world space: right of the wordmark on wide screens, below it on tall ones. */
 export function stageOffset(view: { w: number; h: number }, aspect: number) {
-  return aspect >= 1 ? { x: view.w * 0.22, y: 0 } : { x: 0, y: -view.h * 0.18 };
+  return aspect >= 1 ? { x: view.w * 0.27, y: 0 } : { x: 0, y: view.h * 0.08 };
 }
 
 /** The viewport centre (world 0,0) expressed in the tilted grid's local space. */
@@ -39,6 +49,13 @@ export function fillScale(view: { w: number; h: number }) {
 
 export function backgroundMix(p: number) {
   return clamp01(p / MIX_END);
+}
+
+const FILL_FADE_END = 0.8;
+
+/** 0 until the survivor starts to fill, 1 once it covers the screen; fades the lab copy out. */
+export function fillMix(p: number) {
+  return clamp01((p - FILL_START) / (FILL_FADE_END - FILL_START));
 }
 
 export interface TileState {
