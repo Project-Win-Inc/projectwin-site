@@ -8,4 +8,4 @@ npm run dev          # local dev server
 npm run check && npm test && npm run build && npm run budget && npm run e2e
 ```
 
-See `AGENTS.md` for conventions and deploy notes.
+See `docs/operations.md` for how it works, deploys, DNS and rollback, and `AGENTS.md` for agent conventions.
